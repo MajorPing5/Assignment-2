@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>0e93d20a-e68c-499f-9bbf-dafabb3678c6</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Genetic_Algorithm.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Genetic_Algorithm.py" />
+    <Compile Include="fitness.py" />
+    <Compile Include="main.py" />
+    <Compile Include="operations.py" />
+    <Compile Include="population.py" />
+    <Compile Include="softmax.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
