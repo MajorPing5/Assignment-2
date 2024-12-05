@@ -1,25 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\",
+  "WorkspaceRootPath": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\population.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|solutionrelative:population.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\fitness.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\fitness.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|solutionrelative:fitness.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\operations.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\population.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|solutionrelative:population.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\operations.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|solutionrelative:operations.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\softmax.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\softmax.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|solutionrelative:softmax.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\main.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\main.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{0E93D20A-E68C-499F-9BBF-DAFABB3678C6}|Genetic Algorithm.pyproj|solutionrelative:main.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,11 +38,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "population.py",
-              "DocumentMoniker": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\population.py",
+              "DocumentMoniker": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\population.py",
               "RelativeDocumentMoniker": "population.py",
-              "ToolTip": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\population.py",
+              "ToolTip": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\population.py",
               "RelativeToolTip": "population.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
@@ -51,13 +51,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "fitness.py",
-              "DocumentMoniker": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\fitness.py",
+              "DocumentMoniker": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\fitness.py",
               "RelativeDocumentMoniker": "fitness.py",
-              "ToolTip": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\fitness.py",
+              "ToolTip": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\fitness.py",
               "RelativeToolTip": "fitness.py",
-              "ViewState": "AgIAABoAAAAAAAAAAAAYwD4AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFMAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2024-12-03T21:06:56.067Z",
               "EditorCaption": ""
@@ -66,40 +66,37 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "operations.py",
-              "DocumentMoniker": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\operations.py",
+              "DocumentMoniker": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\operations.py",
               "RelativeDocumentMoniker": "operations.py",
-              "ToolTip": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\operations.py",
+              "ToolTip": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\operations.py",
               "RelativeToolTip": "operations.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-03T21:03:44.292Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-03T21:03:44.292Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "softmax.py",
-              "DocumentMoniker": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\softmax.py",
+              "DocumentMoniker": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\softmax.py",
               "RelativeDocumentMoniker": "softmax.py",
-              "ToolTip": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\softmax.py",
+              "ToolTip": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\softmax.py",
               "RelativeToolTip": "softmax.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-03T20:58:26.584Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-03T20:58:26.584Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "main.py",
-              "DocumentMoniker": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\main.py",
+              "DocumentMoniker": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\main.py",
               "RelativeDocumentMoniker": "main.py",
-              "ToolTip": "C:\\Users\\UMKCE\\Documents\\GitHub\\Academic Files\\Assignment-2\\Genetic Algorithm\\main.py",
+              "ToolTip": "C:\\Users\\Robert-Abel Porras\\OneDrive\\UMKC Comp Sci\\COMP SCI 461\\Assignment-2\\Genetic Algorithm\\main.py",
               "RelativeToolTip": "main.py",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAACnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2024-12-03T19:20:43.564Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-03T19:20:43.564Z"
             }
           ]
         }
