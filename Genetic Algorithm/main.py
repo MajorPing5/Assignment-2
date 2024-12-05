@@ -1,3 +1,4 @@
+from ast import Pow
 import random
 from population import generate_random_population
 from fitness import fitness
@@ -33,7 +34,7 @@ for generation in range(GENERATIONS):
     offspring_population = crossover_population(selected_population)
 
     # Mutation
-    population = mutate_population(offspring_population, MUTATION_RATE, room_capacity)
+    population = mutate_population(offspring_population, MUTATION_RATE/(Pow(2, generation)))
 
     # Optional: Print progress at every 10 generations
     if generation % 10 == 0:
