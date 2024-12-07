@@ -54,7 +54,7 @@ other_facilitators = {
 
 ROMAN_OR_BEACH_ROOMS = ["Roman 216", "Roman 201", "Beach 201", "Beach 301"]
 
-# Lazy cache for time conversions from 12-hour to military time. Should make arithmetic calculations much easier within the codebase
+# Lazy cache for constant time conversions from 12-hour to military time. Should make arithmetic calculations much easier within the codebase
 TIME_CACHE = {
     "10 AM": 10,
     "11 AM": 11,
@@ -81,7 +81,7 @@ def check_consecutive_time_slots(time_a, time_b, room_a, room_b):
     time_b_military = TIME_CACHE[time_b]
     time_diff = abs(time_b_military - time_a_military)
     if time_diff == 1:  # Consecutive time slots (e.g., 10 AM & 11 AM)
-        fitness_score += 0.5  # Reward for consecutive scheduling
+        fitness_score += 0.5 # Reward for consecutive scheduling
         if not are_both_in_roman_or_beach(room_a, room_b):
             fitness_score -= 0.4  # Should help deter large travel distance from Roman or Beach to other rooms
     elif time_diff == 2:  # 2 hours apart means 1 hour intermission
