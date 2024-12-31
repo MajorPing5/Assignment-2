@@ -81,7 +81,7 @@ def check_consecutive_time_slots(time_a, time_b, room_a, room_b):
     time_b_military = TIME_CACHE[time_b]
     time_diff = abs(time_b_military - time_a_military)
     if time_diff == 1:  # Consecutive time slots (e.g., 10 AM & 11 AM)
-        fitness_score += 0.5 # Reward for consecutive scheduling
+        fitness_score += 0.5
         if not are_both_in_roman_or_beach(room_a, room_b):
             fitness_score -= 0.4  # Should help deter large travel distance from Roman or Beach to other rooms
     elif time_diff == 2:  # 2 hours apart means 1 hour intermission
@@ -115,13 +115,18 @@ def fitness(schedule):
     activity_rooms = {}
 
     for activity, room, time, facilitator in schedule:
+        capacity = room_capacity[room]
+        expected = expected_enrollment[activity]
+        
         # Room Size Fitness Evaluation
-        if room_capacity[room] < expected_enrollment[activity]:
-            fitness_score -= 0.5  # Room too small
-        elif room_capacity[room] > 3 * expected_enrollment[activity]:
-            fitness_score -= 0.2  # Room excessively large
+        if capacity < expected:
+            fitness_score -= 0.5    # Room too small
+        elif capacity > 3 * expected:
+            fitness_score -= 0.2    # Room 3x excessively large
+        elif capacity > 6 * expected:
+            fitness_score -= 0.4    # Room 6x excessively large
         else:
-            fitness_score += 0.3  # Room appropriate
+            fitness_score += 0.3  # Room size is appropriate
 
         # Facilitator Preferences
         if facilitator in preferred_facilitators.get(activity, []):
@@ -176,19 +181,9 @@ def fitness(schedule):
         for i in range(1, len(activities)):
             previous_activity, previous_time = activities[i - 1]
             current_activity, current_time = activities[i]
+            
             if current_time == previous_time:  # Consecutive scheduling in the same time slot
                 fitness_score -= 0.2  # Penalty for consecutive scheduling in the same time slot
-
-    # Activity-Specific Consecutive Scheduling Check
-    for facilitator, activities in facilitator_activities.items():
-        activities.sort(key=lambda x: x[1])  # Sort activities by time
-        for i in range(1, len(activities)):
-            previous_activity, previous_time, previous_room = activities[i - 1]
-            current_activity, current_time, current_room = activities[i]
-            if int(current_time.split()[0]) == int(previous_time.split()[0]) + 1:  # Consecutive scheduling check (assuming times are in hours)
-                # Use the abstracted function to check room locations
-                if not are_both_in_roman_or_beach(previous_room, current_room):
-                    fitness_score -= 0.4  # Penalty if not both are in Roman or Beach rooms
 
     # Reward for SLA191 and SLA101 Intermission Rule
     activity_pairs = [
