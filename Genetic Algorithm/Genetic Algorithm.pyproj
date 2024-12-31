@@ -26,6 +26,8 @@
     <Compile Include="operations.py" />
     <Compile Include="population.py" />
     <Compile Include="softmax.py" />
+    <Compile Include="test_fitness.py" />
+    <Compile Include="test_framework.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
