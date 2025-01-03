@@ -72,11 +72,33 @@ def are_both_in_roman_or_beach(previous_room, current_room):
     return (previous_room in ROMAN_OR_BEACH_ROOMS and current_room in ROMAN_OR_BEACH_ROOMS) or \
            (previous_room not in ROMAN_OR_BEACH_ROOMS and current_room not in ROMAN_OR_BEACH_ROOMS)
 
-def check_consecutive_time_slots(time_a, time_b, room_a, room_b):
+def room_cap_check(capacity, expected, fitness_score):
+    # Room Size Fitness Evaluation
+    if capacity < expected:
+        fitness_score -= 0.5    # Room too small
+    elif capacity > 3 * expected:
+        fitness_score -= 0.2    # Room 3x excessively large
+    elif capacity > 6 * expected:
+        fitness_score -= 0.4    # Room 6x excessively large
+    else:
+        fitness_score += 0.3  # Room size is appropriate
+
+    return fitness_score
+
+def facil_pref_check(facilitator, activity, fitness_score):
+    # Facilitator Preferences
+    if facilitator in preferred_facilitators.get(activity, []):
+        fitness_score += 0.5
+    elif facilitator in other_facilitators.get(activity, []):
+        fitness_score += 0.2
+    else:
+        fitness_score -= 0.1
+    return fitness_score
+
+def check_consecutive_time_slots(time_a, time_b, room_a, room_b, fitness_score):
 
     # Evaluate the scheduling of consecutive time slots and room locations to determine feasibility and a practical, efficient schedule for facilitators.
 
-    fitness_score = 0
     time_a_military = TIME_CACHE[time_a]
     time_b_military = TIME_CACHE[time_b]
     time_diff = abs(time_b_military - time_a_military)
@@ -90,8 +112,7 @@ def check_consecutive_time_slots(time_a, time_b, room_a, room_b):
         fitness_score -= 0.25  # Should help deter being at the same time
     return fitness_score
 
-def check_sla_specific_rules(activity_times, activity_rooms):
-    fitness_score = 0
+def check_sla_specific_rules(activity_times, activity_rooms, fitness_score):
     # SLA101 and SLA191 Specific Checks
     for activity_pair in [("SLA101A", "SLA101B"), ("SLA191A", "SLA191B")]:
         times_a = activity_times.get(activity_pair[0], [])
@@ -104,7 +125,7 @@ def check_sla_specific_rules(activity_times, activity_rooms):
                 if time_diff > 4:
                     fitness_score += 0.5  # Reward if activities are more than 4 hours apart
                 elif time_a == time_b:
-                    fitness_score -= 0.5  # Penalty if activities are scheduled at the same time
+                    fitness_score -= 0.5  # Penalty if activities are scheduled at the same timeW
 
 def fitness(schedule):
     fitness_score = 0
@@ -118,23 +139,9 @@ def fitness(schedule):
         capacity = room_capacity[room]
         expected = expected_enrollment[activity]
         
-        # Room Size Fitness Evaluation
-        if capacity < expected:
-            fitness_score -= 0.5    # Room too small
-        elif capacity > 3 * expected:
-            fitness_score -= 0.2    # Room 3x excessively large
-        elif capacity > 6 * expected:
-            fitness_score -= 0.4    # Room 6x excessively large
-        else:
-            fitness_score += 0.3  # Room size is appropriate
+        fitness_score = room_cap_check(capacity, expected, fitness_score)
 
-        # Facilitator Preferences
-        if facilitator in preferred_facilitators.get(activity, []):
-            fitness_score += 0.5
-        elif facilitator in other_facilitators.get(activity, []):
-            fitness_score += 0.2
-        else:
-            fitness_score -= 0.1
+        fitness_score = facil_pref_check(facilitator, activity, fitness_score)        
 
     # Tracking facilitator schedules, activity times, and rooms to assess schedule quality in subsequent calculations.
         # Facilitator schedules
@@ -213,3 +220,10 @@ def fitness(schedule):
 
     return fitness_score
 
+__all__ = [
+    "room_cap_check",
+    "facil_pref_check",
+    "check_consecutive_time_slots",
+    "check_sla_specific_rules"
+    "fitness",
+]

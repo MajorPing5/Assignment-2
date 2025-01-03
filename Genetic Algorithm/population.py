@@ -7,21 +7,20 @@ TIMES = ["10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM"]
 FACILITATORS = ["Lock", "Glen", "Banks", "Richards", "Shaw", "Singer", "Uther", "Tyler", "Numen", "Zeldin"]
 
 def generate_random_population(population_size):
-    # Generates the initial population of schedules.\
-    # \
+    # Generates the initial population of schedules.
+    # 
     # Args: \
-    #    population_size (int): The number of schedules to generate.\
-    # \
+    #    population_size (int): The number of schedules to generate.
+    # 
     # Returns:\
     #    list: A list of randomly generated schedules.
 
     def generate_random_schedule():
-        # \
         # Generates a single random schedule where each activity is uniquely assigned \
-        # a room, time, and facilitator. \
-        # \
+        # a room, time, and facilitator.
+        # 
         # Returns: \
-        #     dict: A schedule organized by time slots, with activities as keys.
+        #     schedule = {time: {activity: {room,facilitator}}}
         #
         schedule = {time: {} for time in TIMES}  # Initialize with times as keys
 

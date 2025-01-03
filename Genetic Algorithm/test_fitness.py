@@ -12,7 +12,7 @@ def test_fitness_perfect_match():
         "facilitator": "Glen",
         "expected_enrollment": 50
     }
-    score = calculate_fitness(schedule)  # Example function from `fitness.py`
+    score = fitness(schedule)  # Example function from `fitness.py`
     assert score > 0, "Fitness score should be positive for perfect match."
 
 @test_case
@@ -24,7 +24,7 @@ def test_fitness_room_too_small():
         "facilitator": "Glen",
         "expected_enrollment": 50
     }
-    score = calculate_fitness(schedule)
+    score = fitness(schedule)
     assert score < 0, "Fitness score should be negative for a room too small."
 
 @test_case
@@ -36,7 +36,7 @@ def test_fitness_facilitator_not_preferred():
         "facilitator": "Richards",  # Not preferred for SLA101A
         "expected_enrollment": 50
     }
-    score = calculate_fitness(schedule)
+    score = fitness(schedule)
     assert score < 0, "Fitness score should decrease for non-preferred facilitators."
 
 # Run all test cases
