@@ -1,7 +1,33 @@
 # test_fitness.py
 from test_framework import test_case, test_framework
+from population import generate_random_population
 
-# Assuming `fitness.py` has functions to calculate fitness, e.g., `calculate_fitness`
+def display_schedule(schedule):
+    """Display a single schedule in a readable format."""
+    print("Generated Schedule:")
+    for time, activities in schedule.items():
+        print(f"Time: {time}")
+        for activity, details in activities.items():
+            print(f"  Activity: {activity}")
+            for key, value in details.items():
+                print(f"    {key.capitalize()}: {value}")
+
+def generate_and_display_schedule():
+    """Generate and display one random schedule."""
+    # Generate a single schedule
+    schedule = generate_random_population(1)[0]  # Extract the first schedule
+
+    # Display the schedule
+    display_schedule(schedule)
+
+    # Pause for manual review
+    input("\nPress Enter to close...")
+
+# Run the script
+if __name__ == "__main__":
+    generate_and_display_schedule()
+
+"""# Assuming `fitness.py` has functions to calculate fitness, e.g., `calculate_fitness`
 
 @test_case
 def test_fitness_perfect_match():
@@ -41,4 +67,4 @@ def test_fitness_facilitator_not_preferred():
 
 # Run all test cases
 if __name__ == "__main__":
-    test_framework.run()
+    test_framework.run()"""
