@@ -54,7 +54,8 @@ other_facilitators = {
 
 ROMAN_OR_BEACH_ROOMS = ["Roman 216", "Roman 201", "Beach 201", "Beach 301"]
 
-# Lazy cache for constant time conversions from 12-hour to military time. Should make arithmetic calculations much easier within the codebase
+# Lazy cache for constant time conversions from 12-hour to military time. 
+# Should make arithmetic calculations much easier within the codebase
 TIME_CACHE = {
     "10 AM": 10,
     "11 AM": 11,
@@ -64,13 +65,19 @@ TIME_CACHE = {
     "3 PM": 15
 }
 
+
 def are_both_in_roman_or_beach(previous_room, current_room):
     """
-    Check if both consecutive activities are in either Roman or Beach rooms to minimize overall facilitator travel time.
-    Helps facilitators have minimal movement between consecutive sessions, improving overall schedule feasibility.
+    Check if both consecutive activities are in either Roman or Beach rooms to
+    minimize overall facilitator travel time.
+    Helps facilitators have minimal movement between consecutive sessions,
+    improving overall schedule feasibility.
     """
-    return (previous_room in ROMAN_OR_BEACH_ROOMS and current_room in ROMAN_OR_BEACH_ROOMS) or \
-           (previous_room not in ROMAN_OR_BEACH_ROOMS and current_room not in ROMAN_OR_BEACH_ROOMS)
+    return (previous_room in ROMAN_OR_BEACH_ROOMS
+            and current_room in ROMAN_OR_BEACH_ROOMS) or \
+           (previous_room not in ROMAN_OR_BEACH_ROOMS
+            and current_room not in ROMAN_OR_BEACH_ROOMS)
+
 
 def room_cap_check(capacity, expected, fitness_score):
     # Room Size Fitness Evaluation
@@ -85,6 +92,7 @@ def room_cap_check(capacity, expected, fitness_score):
 
     return fitness_score
 
+
 def facil_pref_check(facilitator, activity, fitness_score):
     # Facilitator Preferences
     if facilitator in preferred_facilitators.get(activity, []):
@@ -94,6 +102,7 @@ def facil_pref_check(facilitator, activity, fitness_score):
     else:
         fitness_score -= 0.1
     return fitness_score
+
 
 def check_consecutive_time_slots(time_a, time_b, room_a, room_b, fitness_score):
 
@@ -112,6 +121,7 @@ def check_consecutive_time_slots(time_a, time_b, room_a, room_b, fitness_score):
         fitness_score -= 0.25  # Should help deter being at the same time
     return fitness_score
 
+
 def check_sla_specific_rules(activity_times, activity_rooms, fitness_score):
     # SLA101 and SLA191 Specific Checks
     for activity_pair in [("SLA101A", "SLA101B"), ("SLA191A", "SLA191B")]:
@@ -126,6 +136,7 @@ def check_sla_specific_rules(activity_times, activity_rooms, fitness_score):
                     fitness_score += 0.5  # Reward if activities are more than 4 hours apart
                 elif time_a == time_b:
                     fitness_score -= 0.5  # Penalty if activities are scheduled at the same timeW
+
 
 def fitness(schedule):
     fitness_score = 0
@@ -220,10 +231,11 @@ def fitness(schedule):
 
     return fitness_score
 
+
 __all__ = [
     "room_cap_check",
     "facil_pref_check",
     "check_consecutive_time_slots",
-    "check_sla_specific_rules"
+    "check_sla_specific_rules",
     "fitness",
 ]
