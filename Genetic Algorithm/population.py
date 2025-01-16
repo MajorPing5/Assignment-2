@@ -1,7 +1,7 @@
 import random
 
 # Constants defining the possible values for schedules
-ACTIVITIES = ["SLA100A", "SLA100B", "SLA191A", "SLA191B", "SLA201", "SLA291",
+ACTIVITIES = ["SLA101A", "SLA101B", "SLA191A", "SLA191B", "SLA201", "SLA291",
               "SLA303", "SLA304", "SLA394", "SLA449", "SLA451"]
 ROOMS = ["Slater 003", "Roman 216", "Loft 206", "Roman 201", "Loft 310",
          "Beach 201", "Beach 301", "Logos 325", "Frank 119"]
