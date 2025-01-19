@@ -1,13 +1,5 @@
 import random
-
-# Constants defining the possible values for schedules
-ACTIVITIES = ["SLA101A", "SLA101B", "SLA191A", "SLA191B", "SLA201", "SLA291",
-              "SLA303", "SLA304", "SLA394", "SLA449", "SLA451"]
-ROOMS = ["Slater 003", "Roman 216", "Loft 206", "Roman 201", "Loft 310",
-         "Beach 201", "Beach 301", "Logos 325", "Frank 119"]
-TIMES = ["10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM"]
-FACILITATORS = ["Lock", "Glen", "Banks", "Richards", "Shaw", "Singer",
-                "Uther", "Tyler", "Numen", "Zeldin"]
+from data import ACTIVITIES, ROOMS, TIMES, FACILITATORS
 
 
 def generate_random_population(population_size):

@@ -1,9 +1,14 @@
 import random
 import numpy as np
+from data import ROOMS, TIMES, FACILITATORS
+
 
 def select_population(population, probabilities, population_size):
-    selected_indices = np.random.choice(len(population), size=population_size, p=probabilities)
+    selected_indices = np.random.choice(len(population),
+                                        size=population_size,
+                                        p=probabilities)
     return [population[i] for i in selected_indices]
+
 
 def crossover_population(population):
     offspring = []
@@ -19,6 +24,7 @@ def crossover_population(population):
             offspring.append(population[i])
     return offspring
 
+
 def mutate_population(population, mutation_rate):
     mutated_population = []
     for individual in population:
@@ -28,9 +34,9 @@ def mutate_population(population, mutation_rate):
                 activity, _, _, _ = new_individual[i]
                 new_individual[i] = (
                     activity,
-                    random.choice(room_capacity.keys()),
-                    random.choice(["10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM"]),
-                    random.choice(["Lock", "Glen", "Banks", "Richards", "Shaw", "Singer", "Uther", "Tyler", "Numen", "Zeldin"])
+                    random.choice(ROOMS),
+                    random.choice(TIMES),
+                    random.choice(FACILITATORS)
                 )
         mutated_population.append(new_individual)
     return mutated_population

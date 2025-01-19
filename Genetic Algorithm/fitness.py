@@ -1,70 +1,4 @@
-room_capacity = {
-    "Slater 003": 45,
-    "Roman 216": 30,
-    "Loft 206": 75,
-    "Roman 201": 50,
-    "Loft 310": 108,
-    "Beach 201": 60,
-    "Beach 301": 75,
-    "Logos 325": 450,
-    "Frank 119": 60
-}
-
-expected_enrollment = {
-    "SLA100A": 50,
-    "SLA100B": 50,
-    "SLA191A": 50,
-    "SLA191B": 50,
-    "SLA201": 50,
-    "SLA291": 50,
-    "SLA303": 60,
-    "SLA304": 25,
-    "SLA394": 20,
-    "SLA449": 60,
-    "SLA451": 100
-}
-
-preferred_facilitators = {
-    "SLA101A": ["Glen", "Lock", "Banks", "Zeldin"],
-    "SLA101B": ["Glen", "Lock", "Banks", "Zeldin"],
-    "SLA191A": ["Glen", "Lock", "Banks", "Zeldin"],
-    "SLA191B": ["Glen", "Lock", "Banks", "Zeldin"],
-    "SLA201": ["Glen", "Banks", "Zeldin", "Shaw"],
-    "SLA291": ["Lock", "Banks", "Zeldin", "Singer"],
-    "SLA303": ["Glen", "Zeldin", "Banks"],
-    "SLA304": ["Glen", "Banks", "Tyler"],
-    "SLA394": ["Tyler", "Singer"],
-    "SLA449": ["Tyler", "Singer", "Shaw"],
-    "SLA451": ["Tyler", "Singer", "Shaw"]
-}
-
-other_facilitators = {
-    "SLA101A": ["Numen", "Richards"],
-    "SLA101B": ["Numen", "Richards"],
-    "SLA191A": ["Numen", "Richards"],
-    "SLA191B": ["Numen", "Richards"],
-    "SLA201": ["Numen", "Richards", "Singer"],
-    "SLA291": ["Numen", "Richards", "Shaw", "Tyler"],
-    "SLA303": ["Numen", "Singer", "Shaw"],
-    "SLA304": ["Numen", "Singer", "Shaw", "Richards", "Uther", "Zeldin"],
-    "SLA394": ["Richards", "Zeldin"],
-    "SLA449": ["Zeldin", "Uther"],
-    "SLA451": ["Zeldin", "Uther", "Richards", "Banks"]
-}
-
-ROMAN_OR_BEACH_ROOMS = ["Roman 216", "Roman 201", "Beach 201", "Beach 301"]
-
-# Lazy cache for constant time conversions from 12-hour to military time. 
-# Should make arithmetic calculations much easier within the codebase
-TIME_CACHE = {
-    "10 AM": 10,
-    "11 AM": 11,
-    "12 PM": 12,
-    "1 PM": 13,
-    "2 PM": 14,
-    "3 PM": 15
-}
-
+from data import room_cap, expected_enroll, pref_facil, alt_facil, roman_or_beach, time_cache
 
 def are_both_in_roman_or_beach(previous_room, current_room):
     """
@@ -73,10 +7,30 @@ def are_both_in_roman_or_beach(previous_room, current_room):
     Helps facilitators have minimal movement between consecutive sessions,
     improving overall schedule feasibility.
     """
-    return (previous_room in ROMAN_OR_BEACH_ROOMS
-            and current_room in ROMAN_OR_BEACH_ROOMS) or \
-           (previous_room not in ROMAN_OR_BEACH_ROOMS
-            and current_room not in ROMAN_OR_BEACH_ROOMS)
+    return (previous_room in roman_or_beach
+            and current_room in roman_or_beach) or \
+           (previous_room not in roman_or_beach
+            and current_room not in roman_or_beach)
+
+
+def eval_room(room, act):
+    # Room Size Fitness Evaluation
+    adj = 0
+    capacity = room_cap[room]
+    expected = expected_enroll[act]
+    ratio = capacity / expected
+
+    if ratio < 1:
+        adj = -0.5  # Room too small
+    elif ratio > 6:
+        adj = -0.4  # Room excessively large
+    elif ratio > 3:
+        adj = -0.2  # Room moderately large
+    else:
+        adj = 0.3  # Room size appropriate
+    
+    return adj
+
 
 
 def room_cap_check(capacity, expected, fitness_score):
@@ -93,14 +47,15 @@ def room_cap_check(capacity, expected, fitness_score):
     return fitness_score
 
 
-def facil_pref_check(facilitator, activity, fitness_score):
+def facil_pref_check(facilitator, act, fitness_score):
     # Facilitator Preferences
-    if facilitator in preferred_facilitators.get(activity, []):
+    if facilitator in pref_facil.get(act, []):
         fitness_score += 0.5
-    elif facilitator in other_facilitators.get(activity, []):
+    elif facilitator in alt_facil.get(act, []):
         fitness_score += 0.2
     else:
         fitness_score -= 0.1
+    
     return fitness_score
 
 
@@ -108,8 +63,8 @@ def check_consecutive_time_slots(time_a, time_b, room_a, room_b, fitness_score):
 
     # Evaluate the scheduling of consecutive time slots and room locations to determine feasibility and a practical, efficient schedule for facilitators.
 
-    time_a_military = TIME_CACHE[time_a]
-    time_b_military = TIME_CACHE[time_b]
+    time_a_military = time_cache[time_a]
+    time_b_military = time_cache[time_b]
     time_diff = abs(time_b_military - time_a_military)
     if time_diff == 1:  # Consecutive time slots (e.g., 10 AM & 11 AM)
         fitness_score += 0.5
@@ -129,8 +84,8 @@ def check_sla_specific_rules(activity_times, activity_rooms, fitness_score):
         times_b = activity_times.get(activity_pair[1], [])
         for time_a in times_a:
             for time_b in times_b:
-                time_a_military = TIME_CACHE[time_a]
-                time_b_military = TIME_CACHE[time_b]
+                time_a_military = time_cache[time_a]
+                time_b_military = time_cache[time_b]
                 time_diff = abs(time_b_military - time_a_military)
                 if time_diff > 4:
                     fitness_score += 0.5  # Reward if activities are more than 4 hours apart
@@ -138,41 +93,39 @@ def check_sla_specific_rules(activity_times, activity_rooms, fitness_score):
                     fitness_score -= 0.5  # Penalty if activities are scheduled at the same timeW
 
 
+# Helps track facilitators activity load to prevent overload of assignment
+def track_fac_sched(fac, act, time, fac_sched):
+    if fac not in fac_sched:
+        fac_sched[fac] = {"count": 0, "times": set(), "acts": []}
+    fac_sched[fac]["count"] += 1
+    fac_sched[fac]["times"].add(time)
+    fac_sched[fac]["acts"].append((act, time))
+
+
 def fitness(schedule):
-    fitness_score = 0
-    facilitator_schedule_count = {}
-    facilitator_time_slots = {}
-    facilitator_activities = {}
-    activity_times = {}
-    activity_rooms = {}
+    score = 0
+    fac_sched = {}
+    act_times = {}
+    act_rooms = {}
 
-    for activity, room, time, facilitator in schedule:
-        capacity = room_capacity[room]
-        expected = expected_enrollment[activity]
+    for act, room, time, fac in schedule:
+        capacity = room_cap[room]
+        expected = expected_enroll[act]
         
-        fitness_score = room_cap_check(capacity, expected, fitness_score)
+        fitness_score = eval_room(room, act)
 
-        fitness_score = facil_pref_check(facilitator, activity, fitness_score)        
+        fitness_score = facil_pref_check(fac, act, fitness_score)        
 
     # Tracking facilitator schedules, activity times, and rooms to assess schedule quality in subsequent calculations.
-        # Facilitator schedules
-        if facilitator not in facilitator_schedule_count:
-            facilitator_schedule_count[facilitator] = 0
-            facilitator_time_slots[facilitator] = set()
-            facilitator_activities[facilitator] = []
-        facilitator_schedule_count[facilitator] += 1
-        facilitator_time_slots[facilitator].add(time)
-        facilitator_activities[facilitator].append((activity, time))
-
         # Activity times for specific activities
-        if activity not in activity_times:
-            activity_times[activity] = []
-        activity_times[activity].append(time)
+        if act not in activity_times:
+            activity_times[act] = []
+        activity_times[act].append(time)
 
         # Activity rooms for specific activities
-        if activity not in activity_rooms:
-            activity_rooms[activity] = []
-        activity_rooms[activity].append(room)
+        if act not in activity_rooms:
+            activity_rooms[act] = []
+        activity_rooms[act].append(room)
 
     # Facilitator Overscheduling Rules
     for facilitator, count in facilitator_schedule_count.items():

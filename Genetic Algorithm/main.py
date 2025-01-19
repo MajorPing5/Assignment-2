@@ -1,10 +1,10 @@
 from ast import Pow
-import random
 from population import generate_random_population
 from fitness import fitness
-from operations import select_population, mutate_population, crossover_population
+from operations import select_population, mutate_population
+from operations import crossover_population
 import numpy as np
-from softmax import softmax
+from scipy.special import softmax
 
 # Using imports from multiple files helps modularize the code, making it easier to test, maintain, and extend each component separately.
 # Consider ensuring that each imported module is placed in the same directory or installed as a package to avoid 'ModuleNotFoundError'.
@@ -25,7 +25,7 @@ for generation in range(GENERATIONS):
     fitness_scores = [fitness(individual) for individual in population]
 
     # Softmax Normalization
-    probabilities = softmax(np.array(fitness_scores))
+    probabilities = softmax(fitness_scores)
 
     # Selection
     selected_population = select_population(population, probabilities, POPULATION_SIZE)
