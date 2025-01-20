@@ -1,4 +1,4 @@
-from data import room_cap, expected_enroll, pref_facil, alt_facil, roman_or_beach, time_cache
+from data import room_cap, expected_enroll, pref_facil, alt_facil, roman_or_beach, time_cache, activity_pairs
 
 def are_both_in_roman_or_beach(previous_room, current_room):
     """
@@ -32,31 +32,33 @@ def eval_room(room, act):
     return adj
 
 
-
-def room_cap_check(capacity, expected, fitness_score):
-    # Room Size Fitness Evaluation
-    if capacity < expected:
-        fitness_score -= 0.5    # Room too small
-    elif capacity > 3 * expected:
-        fitness_score -= 0.2    # Room 3x excessively large
-    elif capacity > 6 * expected:
-        fitness_score -= 0.4    # Room 6x excessively large
-    else:
-        fitness_score += 0.3  # Room size is appropriate
-
-    return fitness_score
-
-
-def facil_pref_check(facilitator, act, fitness_score):
+def facil_pref(fac, act, fitness_score):
     # Facilitator Preferences
-    if facilitator in pref_facil.get(act, []):
+    if fac in pref_facil.get(act, []):
         fitness_score += 0.5
-    elif facilitator in alt_facil.get(act, []):
+    elif fac in alt_facil.get(act, []):
         fitness_score += 0.2
     else:
         fitness_score -= 0.1
     
     return fitness_score
+
+
+def time_overlap(fac_sched):
+    # Evaluates penalties and rewards for time slot overlaps for each facilitator.
+    # dict[str, {Set[str], List[(str, str)]}] -> float
+
+    adj = 0
+    for fac, sched in fac_sched.items():
+        times = sched["times"]  # Set of all time slots assigned to the facilitator
+        for time in times:
+            # Count the number of activities in this specific time slot
+            act_count = sum(1 for _, t in sched["acts"] if t == time)
+            if act_count == 1:
+                adj += 0.2  # Reward for overseeing 1 activity in the time slot
+            elif act_count > 1:
+                adj -= 0.2  # Penalty for overseeing multiple activities simultaneously
+    return adj
 
 
 def check_consecutive_time_slots(time_a, time_b, room_a, room_b, fitness_score):
@@ -92,9 +94,9 @@ def check_sla_specific_rules(activity_times, activity_rooms, fitness_score):
                 elif time_a == time_b:
                     fitness_score -= 0.5  # Penalty if activities are scheduled at the same timeW
 
-
+ 
 # Helps track facilitators activity load to prevent overload of assignment
-def track_fac_sched(fac, act, time, fac_sched):
+def track_fac_sched(time, act, fac, fac_sched):
     if fac not in fac_sched:
         fac_sched[fac] = {"count": 0, "times": set(), "acts": []}
     fac_sched[fac]["count"] += 1
@@ -108,64 +110,46 @@ def fitness(schedule):
     act_times = {}
     act_rooms = {}
 
-    for act, room, time, fac in schedule:
-        capacity = room_cap[room]
-        expected = expected_enroll[act]
+    for time, act, room, fac in schedule:
         
         fitness_score = eval_room(room, act)
-
-        fitness_score = facil_pref_check(fac, act, fitness_score)        
+        fitness_score = facil_pref(fac, act, fitness_score)
+        track_fac_sched(time, act, fac, fac_sched)
 
     # Tracking facilitator schedules, activity times, and rooms to assess schedule quality in subsequent calculations.
         # Activity times for specific activities
-        if act not in activity_times:
-            activity_times[act] = []
-        activity_times[act].append(time)
+        if act not in act_times:
+            act_times[act] = []
+        act_times[act].append(time)
 
         # Activity rooms for specific activities
-        if act not in activity_rooms:
-            activity_rooms[act] = []
-        activity_rooms[act].append(room)
+        if act not in act_rooms:
+            act_rooms[act] = []
+        act_rooms[act].append(room)
 
     # Facilitator Overscheduling Rules
-    for facilitator, count in facilitator_schedule_count.items():
-        if facilitator == "Tyler" and count < 2:
-            # No penalty for Dr. Tyler if overseeing less than 2 activities
-            continue
-        elif count < 2:
-            fitness_score -= 0.4  # Penalty for overseeing less than 2 activities
-        elif count > 5:
+    for fac, count in fac_sched.items():
+        if count > 4:
             fitness_score -= 0.5  # Penalty for overseeing more than 5 activities
+        elif count <= 2 and fac != "Tyler":
+            fitness_score -= 0.4
 
-    # Time Slot Overlap Penalties and Rewards
-    for facilitator, time_slots in facilitator_time_slots.items():
-        for time in time_slots:
-            activities_at_time = sum(1 for _, _, t, f in schedule if f == facilitator and t == time)
-            if activities_at_time == 1:
-                fitness_score += 0.2  # Reward for overseeing 1 activity at a time slot
-            elif activities_at_time > 1:
-                fitness_score -= 0.2  # Penalty for overseeing more than 1 activity at a time slot
+    fitness_score += time_overlap(fac_sched)
 
     # Activity-Specific Consecutive Scheduling Check
-    for facilitator, activities in facilitator_activities.items():
-        activities.sort(key=lambda x: x[1])  # Sort activities by time
-        for i in range(1, len(activities)):
-            previous_activity, previous_time = activities[i - 1]
-            current_activity, current_time = activities[i]
+    for fac, act in facilitator_activities.items():
+        act.sort(key=lambda x: x[1])  # Sort activities by time
+        for i in range(1, len(act)):
+            previous_activity, previous_time = act[i - 1]
+            current_activity, current_time = act[i]
             
             if current_time == previous_time:  # Consecutive scheduling in the same time slot
                 fitness_score -= 0.2  # Penalty for consecutive scheduling in the same time slot
 
     # Reward for SLA191 and SLA101 Intermission Rule
-    activity_pairs = [
-        ("SLA101A", "SLA191A"), ("SLA101A", "SLA191B"),
-        ("SLA101B", "SLA191A"), ("SLA101B", "SLA191B"),
-        ("SLA191A", "SLA101A"), ("SLA191A", "SLA101B"),
-        ("SLA191B", "SLA101A"), ("SLA191B", "SLA101B")
-    ]
     for activity_101, activity_191 in activity_pairs:
-        times_101 = activity_times.get(activity_101, [])
-        times_191 = activity_times.get(activity_191, [])
+        times_101 = act_times.get(activity_101, [])
+        times_191 = act_times.get(activity_191, [])
         for time_101 in times_101:
             for time_191 in times_191:
                 time_diff = abs(int(time_101.split()[0]) - int(time_191.split()[0]))
@@ -176,8 +160,8 @@ def fitness(schedule):
 
     # Penalty for Consecutive SLA191 and SLA101 not in Roman or Beach
     for activity_group in [("SLA101A", "SLA101B"), ("SLA191A", "SLA191B")]:
-        rooms_a = activity_rooms.get(activity_group[0], [])
-        rooms_b = activity_rooms.get(activity_group[1], [])
+        rooms_a = act_rooms.get(activity_group[0], [])
+        rooms_b = act_rooms.get(activity_group[1], [])
         for room_a, room_b in zip(rooms_a, rooms_b):
             if not are_both_in_roman_or_beach(room_a, room_b):
                     fitness_score -= 0.4  # Penalty if not both are in Roman or Beach rooms

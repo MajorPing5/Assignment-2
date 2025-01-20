@@ -74,3 +74,10 @@ time_cache = {
     "2 PM": 14,
     "3 PM": 15
 }
+
+activity_pairs = [
+    ("SLA101A", "SLA191A"), ("SLA101A", "SLA191B"),
+    ("SLA101B", "SLA191A"), ("SLA101B", "SLA191B"),
+    ("SLA191A", "SLA101A"), ("SLA191A", "SLA101B"),
+    ("SLA191B", "SLA101A"), ("SLA191B", "SLA101B")
+]
