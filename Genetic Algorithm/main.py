@@ -22,7 +22,7 @@ population = generate_random_population(POPULATION_SIZE)
 # Evolutionary Loop
 for generation in range(GENERATIONS):
     # Calculate Fitness Scores
-    fitness_scores = [fitness(individual) for individual in population]
+    fitness_scores = [fitness(schedule) for schedule in population]
 
     # Softmax Normalization
     probabilities = softmax(fitness_scores)
@@ -43,7 +43,7 @@ for generation in range(GENERATIONS):
         print(f"Generation {generation}: Best Fitness = {best_fitness:.2f}")
 
 # Final Evaluation
-final_fitness_scores = [fitness(individual) for individual in population]
+final_fitness_scores = [fitness(schedule) for schedule in population]
 best_index = np.argmax(final_fitness_scores)
 best_schedule = population[best_index]
 best_fitness_score = final_fitness_scores[best_index]
