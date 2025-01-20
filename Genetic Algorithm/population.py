@@ -10,26 +10,22 @@ def generate_random_population(population_size):
     #    list: A list of randomly generated schedules.
 
     def generate_random_schedule():
-        # Generates a single random schedule where each activity
-        # is uniquely assigned a room, time, and facilitator.
-        # Returns: \
-        #     schedule = {time: {activity: {room,facilitator}}}
-
-        schedule = {time: {} for time in TIMES}  # Initialize w/ times as keys
-
+        # Generates a single random schedule with activity-centric keys.
+        # Returns:
+        #     schedule = {activity: {"time": str, "room": str, "facilitator": str}}
+        
+        schedule = {}
         for activity in ACTIVITIES:
-            # Randomly select room, facilitator, and time
             room = random.choice(ROOMS)
             facilitator = random.choice(FACILITATORS)
             time = random.choice(TIMES)
-
-            # Assign the activity under the selected time slot
-            schedule[time][activity] = {
+            schedule[activity] = {
+                "time": time,
                 "room": room,
                 "facilitator": facilitator
             }
-
         return schedule
+
 
     # Generate a list of random schedules
     return [generate_random_schedule() for _ in range(population_size)]

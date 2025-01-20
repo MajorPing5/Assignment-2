@@ -1,12 +1,7 @@
 from data import room_cap, expected_enroll, pref_facil, alt_facil, roman_or_beach, time_cache, activity_pairs
 
 def are_both_in_roman_or_beach(previous_room, current_room):
-    """
-    Check if both consecutive activities are in either Roman or Beach rooms to
-    minimize overall facilitator travel time.
-    Helps facilitators have minimal movement between consecutive sessions,
-    improving overall schedule feasibility.
-    """
+    # A single function to verify if the roman/beach condition is valid
     return (previous_room in roman_or_beach
             and current_room in roman_or_beach) or \
            (previous_room not in roman_or_beach
