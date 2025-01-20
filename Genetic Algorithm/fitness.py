@@ -120,6 +120,12 @@ def fitness(schedule):
         act_rooms[act] = room
         act_times[act] = time
     
+    sla_time_data = {
+        act: schedule[act]["time"]
+        for act in ["SLA101A", "SLA101B", "SLA191A", "SLA191B"]
+        if act in schedule
+    }
+
     #Stage 2: Schedule Processing via Fitness Evaluation
     fitness_score = 0
 
@@ -160,11 +166,9 @@ def fitness(schedule):
                     fitness_score -= 0.25  # Penalty if SLA101 and SLA191 are scheduled at the same time
 
     # Penalty for Consecutive SLA191 and SLA101 not in Roman or Beach
-    for activity_group in [("SLA101A", "SLA101B"), ("SLA191A", "SLA191B")]:
-        rooms_a = act_rooms.get(activity_group[0], [])
-        rooms_b = act_rooms.get(activity_group[1], [])
-        for room_a, room_b in zip(rooms_a, rooms_b):
-            if not roman_or_beach(room_a, room_b):
-                    fitness_score -= 0.4  # Penalty if not both are in Roman or Beach rooms
+    for act_a, act_b in [("SLA101A", "SLA101B"), ("SLA191A", "SLA191B")]:
+        time_diff = time_delta(schedule["SLA101A"], schedule["SLA101B"], time_cache)
+        adj = check_sla_specific_rules(sla_time_data, time_diff)
+        fitness_score += adj
 
     return fitness_score
