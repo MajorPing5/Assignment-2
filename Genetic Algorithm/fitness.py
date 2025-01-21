@@ -1,11 +1,11 @@
-from data import room_cap, expected_enroll, pref_facil, alt_facil, roman_or_beach, time_cache, activity_pairs
+from data import room_cap, expected_enroll, pref_facil, alt_facil, roman_beach, time_cache, activity_pairs
 
 def roman_or_beach(previous_room, current_room):
     # A single function to verify if the roman/beach condition is valid
-    return (previous_room in roman_or_beach
-            and current_room in roman_or_beach) or \
-           (previous_room not in roman_or_beach
-            and current_room not in roman_or_beach)
+    return (previous_room in roman_beach
+            and current_room in roman_beach) or \
+           (previous_room not in roman_beach
+            and current_room not in roman_beach)
 
 
 def eval_room(room, activity, room_capacity, expected_enrollment):
@@ -64,13 +64,13 @@ def check_consecutive_time_slots(time_diff, room_a, room_b,):
     if time_diff == 1:  # Consecutive time slots (e.g., 10 AM & 11 AM)
         adj = 0.5
         if not roman_or_beach(room_a, room_b):
-            adj = -0.4  # Should help deter large travel distance from Roman or Beach to other rooms
+            adj -= 0.4  # Should help deter large travel distance from Roman or Beach to other rooms
     elif time_diff == 2:  # 2 hours apart means 1 hour intermission
         adj = 0.25
     elif time_diff == 0:
         adj = -0.25  # Should help deter being at the same time
     
-    return adj
+    return round(adj, 2)
 
 
 def check_sla_specific_rules(time_diff, activity_pair):

@@ -41,10 +41,10 @@ class TestManualSchedule(unittest.TestCase):
         input("\nPress Enter to close...")
 
 class TestRomanOrBeach(unittest.TestCase):
-    def roman_or_beach_true(self):
+    def test_roman_or_beach_true(self):
         true_cases = [
             ("Roman 216", "Roman 201"),     # Both Roman
-            ("Roman 102", "Roman 216"),     # Both Roman, alt variation
+            ("Roman 201", "Roman 216"),     # Both Roman, alt variation
             ("Beach 201", "Beach 301"),     # Both Beach
             ("Beach 301", "Beach 201"),     # Both Beach, alt variation
             ("Loft 206", "Frank 119"),      # Neither Roman nor Beach
@@ -57,7 +57,7 @@ class TestRomanOrBeach(unittest.TestCase):
                 )
 
 
-    def roman_or_beach_false(self):
+    def test_roman_or_beach_false(self):
         false_cases = [
             ("Roman 201", "Loft 206"),  # Only previous room is Roman
             ("Beach 201", "Loft 206"),  # Only previous room is Beach
@@ -71,6 +71,58 @@ class TestRomanOrBeach(unittest.TestCase):
                     f"Expected False for previous_room={previous_room}, current_room={current_room}"
                 )
         
+
+class TestConsecutiveTimeSlots(unittest.TestCase):
+    def test_SLA_consecutive_valid_time(self):
+        # Test valid consecutive time slots.
+        test_cases = [
+            (1, "Roman 216", "Beach 301", 0.5),  # Both Roman/Beach
+            (1, "Loft 206", "Frank 119", 0.5),   # Neither Roman/Beach
+        ]
+        for time_diff, room_a, room_b, expected in test_cases:
+            print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
+            with self.subTest(time_diff = time_diff, room_a = room_a, room_b = room_b):
+                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+
+    def test_SLA_consecutive_invalid_time(self):
+        # Test invalid consecutive time slots.
+        invalid_cases = [
+            (1, "Roman 216", "Loft 206", 0.1),  # Roman/Other
+            (1, "Beach 301", "Loft 206", 0.1),  # Beach/Other
+            (1, "Loft 206", "Roman 216", 0.1),  # Other/Roman
+            (1, "Loft 206", "Beach 301", 0.1),  # Other/Beach
+        ]
+        for time_diff, room_a, room_b, expected in invalid_cases:
+            print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
+            with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
+                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+
+    def test_SLA_one_hour_DeltaT(self):
+        # Test cases where time difference is two hours.
+        cases = [
+            (2, "Roman 201", "Beach 201", 0.25),  # Two hours apart
+        ]
+        for time_diff, room_a, room_b, expected in cases:
+            with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
+                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+
+    def test_same_time_slots(self):
+        # Test cases where the time difference is zero (same time slots).
+        cases = [
+            (0, "Roman 216", "Beach 301", -0.25),  # Same time slots
+        ]
+        for time_diff, room_a, room_b, expected in cases:
+            with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
+                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+
+
+def load_tests(loader, tests, pattern):
+    # Dynamically load tests from TestRomanOrBeach and TestConsecutiveTimeSlots.
+    suite = unittest.TestSuite()
+    suite.addTests(loader.loadTestsFromTestCase(TestRomanOrBeach))
+    suite.addTests(loader.loadTestsFromTestCase(TestConsecutiveTimeSlots))
+    return suite
+
 
 # Run the script
 if __name__ == "__main__":

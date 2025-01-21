@@ -62,7 +62,7 @@ alt_facil = {
     "SLA451": ["Zeldin", "Uther", "Richards", "Banks"]
 }
 
-roman_or_beach = ["Roman 216", "Roman 201", "Beach 201", "Beach 301"]
+roman_beach = ["Roman 216", "Roman 201", "Beach 201", "Beach 301"]
 
 # Lazy cache for constant time conversions from 12-hour to military time. 
 # Should make arithmetic calculations much easier within the codebase
