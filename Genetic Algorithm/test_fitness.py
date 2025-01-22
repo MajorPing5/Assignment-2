@@ -80,9 +80,12 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
             (1, "Loft 206", "Frank 119", 0.5),   # Neither Roman/Beach
         ]
         for time_diff, room_a, room_b, expected in test_cases:
-            print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
             with self.subTest(time_diff = time_diff, room_a = room_a, room_b = room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected,
+                    f"DEBUG: Expected {expected}, got {fitness.check_consecutive_time_slots(time_diff, room_a, room_b)}"
+                )
 
     def test_SLA_consecutive_invalid_time(self):
         # Test invalid consecutive time slots.
@@ -93,9 +96,12 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
             (1, "Loft 206", "Beach 301", 0.1),  # Other/Beach
         ]
         for time_diff, room_a, room_b, expected in invalid_cases:
-            print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected,
+                    f"DEBUG: Expected {expected}, got {fitness.check_consecutive_time_slots(time_diff, room_a, room_b)}"
+                )
 
     def test_SLA_one_hour_DeltaT(self):
         # Test cases where time difference is two hours.
@@ -104,7 +110,11 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
         ]
         for time_diff, room_a, room_b, expected in cases:
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected,
+                    f"DEBUG: Expected {expected}, got {fitness.check_consecutive_time_slots(time_diff, room_a, room_b)}"
+                )
 
     def test_same_time_slots(self):
         # Test cases where the time difference is zero (same time slots).
@@ -113,7 +123,34 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
         ]
         for time_diff, room_a, room_b, expected in cases:
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected,
+                    f"DEBUG: Expected {expected}, got {fitness.check_consecutive_time_slots(time_diff, room_a, room_b)}"
+                )
+
+
+class TestRoomEvaluation(unittest.TestCase):
+    def test_eval_room(self):
+        """Test the eval_room function under various scenarios."""
+        test_cases = [
+            ("Room A", "Activity 1", {"Room A": 50}, {"Activity 1": 60}, -0.5),     # Room too small
+            ("Room B", "Activity 2", {"Room B": 59}, {"Activity 2": 60}, -0.5),     # Room at min small (x=cap+1)
+            ("Room C", "Activity 3", {"Room C": 500}, {"Activity 3": 50}, -0.4),    # Room excessively large (x>6*cap)
+            ("Room D", "Activity 4", {"Room D": 300}, {"Activity 4": 50}, -0.2),    # Room at max moderate large (x=6*cap)
+            ("Room E", "Activity 5", {"Room E": 180}, {"Activity 5": 50}, -0.2),    # Room moderately large (x>3*cap)
+            ("Room F", "Activity 6", {"Room F": 150}, {"Activity 6": 50}, 0.3),     # Room at max acceptable size (x>3*cap)
+            ("Room G", "Activity 7", {"Room G": 150}, {"Activity 7": 100}, 0.3),    # Room size appropriate
+        ]
+
+        for room, activity, room_capacity, expected_enrollment, expected in test_cases:
+            with self.subTest(room=room, activity=activity):
+                actual = fitness.eval_room(room, activity, room_capacity, expected_enrollment)
+                self.assertEqual(
+                    actual,
+                    expected,
+                    f"DEBUG: Expected {expected}, got {actual} for room={room}, activity={activity}"
+                )
 
 
 def load_tests(loader, tests, pattern):
@@ -121,6 +158,7 @@ def load_tests(loader, tests, pattern):
     suite = unittest.TestSuite()
     suite.addTests(loader.loadTestsFromTestCase(TestRomanOrBeach))
     suite.addTests(loader.loadTestsFromTestCase(TestConsecutiveTimeSlots))
+    suite.addTests(loader.loadTestsFromTestCase(TestRoomEvaluation))
     return suite
 
 
