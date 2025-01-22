@@ -52,9 +52,7 @@ class TestRomanOrBeach(unittest.TestCase):
         for previous_room, current_room in true_cases:
             with self.subTest(state="Should Return True", previous_room=previous_room, current_room=current_room):
                 self.assertTrue(
-                    fitness.roman_or_beach(previous_room, current_room),
-                    f"Expected True for previous_room={previous_room}, current_room={current_room}"
-                )
+                    fitness.roman_or_beach(previous_room, current_room))
 
 
     def test_roman_or_beach_false(self):
@@ -67,9 +65,7 @@ class TestRomanOrBeach(unittest.TestCase):
         for previous_room, current_room in false_cases:
             with self.subTest(state="Should Return False", previous_room=previous_room, current_room=current_room):
                 self.assertFalse(
-                    fitness.roman_or_beach(previous_room, current_room),
-                    f"Expected False for previous_room={previous_room}, current_room={current_room}"
-                )
+                    fitness.roman_or_beach(previous_room, current_room))
         
 
 class TestConsecutiveTimeSlots(unittest.TestCase):
@@ -82,7 +78,9 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
         for time_diff, room_a, room_b, expected in test_cases:
             print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
             with self.subTest(time_diff = time_diff, room_a = room_a, room_b = room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected)
 
     def test_SLA_consecutive_invalid_time(self):
         # Test invalid consecutive time slots.
@@ -95,7 +93,9 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
         for time_diff, room_a, room_b, expected in invalid_cases:
             print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected)
 
     def test_SLA_one_hour_DeltaT(self):
         # Test cases where time difference is two hours.
@@ -104,7 +104,9 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
         ]
         for time_diff, room_a, room_b, expected in cases:
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected)
 
     def test_same_time_slots(self):
         # Test cases where the time difference is zero (same time slots).
@@ -113,7 +115,9 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
         ]
         for time_diff, room_a, room_b, expected in cases:
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
-                self.assertEqual(fitness.check_consecutive_time_slots(time_diff, room_a, room_b), expected)
+                self.assertEqual(
+                    fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
+                    expected)
 
 
 def load_tests(loader, tests, pattern):
