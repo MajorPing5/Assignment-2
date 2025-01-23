@@ -76,7 +76,6 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
             (1, "Loft 206", "Frank 119", 0.5),   # Neither Roman/Beach
         ]
         for time_diff, room_a, room_b, expected in test_cases:
-            print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
             with self.subTest(time_diff = time_diff, room_a = room_a, room_b = room_b):
                 self.assertEqual(
                     fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
@@ -91,7 +90,6 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
             (1, "Loft 206", "Beach 301", 0.1),  # Other/Beach
         ]
         for time_diff, room_a, room_b, expected in invalid_cases:
-            print(f"DEBUG: time_diff={time_diff}, room_a={room_a}, room_b={room_b}, expected={expected}")
             with self.subTest(time_diff=time_diff, room_a=room_a, room_b=room_b):
                 self.assertEqual(
                     fitness.check_consecutive_time_slots(time_diff, room_a, room_b),
@@ -120,12 +118,44 @@ class TestConsecutiveTimeSlots(unittest.TestCase):
                     expected)
 
 
+class TestRoomEvaluation(unittest.TestCase):
+    def test_eval_room(self):
+        test_cases = [
+            ("Room A", "Activity 1", {"Room A": 50}, {"Activity 1": 60}, -0.5),     # Room too small
+            ("Room B", "Activity 2", {"Room B": 50}, {"Activity 2": 51}, -0.5),     # Room cap = expected - 1 -> Barely considered too small
+            ("Room C", "Activity 3", {"Room C": 50}, {"Activity 3": 50}, 0.3),      # Room cap = expected -> Perfect size
+            ("Room D", "Activity 4", {"Room D": 150}, {"Activity 4": 50}, 0.3),     # Room cap = 3*expected -> At max acceptable size
+            ("Room E", "Activity 5", {"Room E": 151}, {"Activity 5": 50}, -0.2),    # Room cap > 3*expected -> First discrete value over acceptable size
+            ("Room F", "Activity 6", {"Room F": 300}, {"Activity 6": 50}, -0.2),    # Room cap = 6*expected -> At max allowed tier 1 too big
+            ("Room G", "Activity 7", {"Room G": 301}, {"Activity 7": 50}, -0.4)     # Room cap > 6*expected - > First discrete value of excessive large room
+        ]
+
+        for room, activity, room_capacity, expected_enrollment, expected in test_cases:
+            with self.subTest(room=room, activity=activity):
+                actual = fitness.eval_room(room, activity, room_capacity, expected_enrollment)
+                self.assertEqual(
+                    actual,
+                    expected
+                )
+
+
 def load_tests(loader, tests, pattern):
-    # Dynamically load tests from TestRomanOrBeach and TestConsecutiveTimeSlots.
-    suite = unittest.TestSuite()
-    suite.addTests(loader.loadTestsFromTestCase(TestRomanOrBeach))
-    suite.addTests(loader.loadTestsFromTestCase(TestConsecutiveTimeSlots))
-    return suite
+    rb_suite = unittest.TestSuite()
+    rb_suite.addTests(loader.loadTestsFromTestCase(TestRomanOrBeach))
+    
+    consecutive_suite = unittest.TestSuite()
+    consecutive_suite.addTests(loader.loadTestsFromTestCase(TestConsecutiveTimeSlots))
+
+    room_suite = unittest.TestSuite()
+    room_suite.addTests(loader.loadTestsFromTestCase(TestRoomEvaluation))
+
+    # Dynamically load tests from all previous suites and isolated test cases.
+    master_suite = unittest.TestSuite()
+    master_suite.addTests(rb_suite)
+    master_suite.addTests(consecutive_suite)
+    master_suite.addTests(room_suite)
+    
+    return master_suite
 
 
 # Run the script
