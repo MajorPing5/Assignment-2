@@ -79,7 +79,7 @@ def check_sla_specific_rules(time_diff, activity_pair):
     for activity_pair in [("SLA101A", "SLA101B"), ("SLA191A", "SLA191B")]:
         if time_diff > 4:
             adj = 0.5  # Reward if activities are more than 4 hours apart
-        elif time_a == time_b:
+        elif time_diff == 0:
             adj = -0.5  # Penalty if activities are scheduled at the same time
     
     return adj
@@ -130,10 +130,11 @@ def fitness(schedule):
     fitness_score = 0
 
     for time, act, room, fac in schedule:
-        
-        fitness_score = eval_room(room, act, room_cap, expected_enroll)
-        fitness_score = facil_pref(fac, act, pref_facil, alt_facil)
+
+        room_score = eval_room(room, act, room_cap, expected_enroll)
+        facil_score = facil_pref(fac, act, pref_facil, alt_facil)
     
+
     # Facilitator Overscheduling Rules
     for fac, count in fac_sched.items():
         if count > 4:
@@ -141,11 +142,11 @@ def fitness(schedule):
         elif count <= 2 and fac != "Tyler":
             fitness_score -= 0.4
 
-    fitness_score += time_overlap(fac_sched)
+    time_score = time_overlap(fac_sched)
 
     # Activity-Specific Consecutive Scheduling Check
-    for fac, act in facilitator_activities.items():
-        act.sort(key=lambda x: x[1])  # Sort activities by time
+    for act, fac in fac_sched.items():
+        fac_sched.sort(key=lambda x: x[1])  # Sort activities by time
         for i in range(1, len(act)):
             previous_activity, previous_time = act[i - 1]
             current_activity, current_time = act[i]
