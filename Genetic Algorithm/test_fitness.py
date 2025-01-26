@@ -139,6 +139,31 @@ class TestRoomEvaluation(unittest.TestCase):
                 )
 
 
+class TestFitnessEvaluation(unittest.TestCase):
+    def test_fitness(self):
+        test_schedule = {
+                "SLA191A": {"time": "10 AM", "room": "Beach 201", "facilitator": "Uther"},
+                "SLA201": {"time": "10 AM", "room": "Roman 201", "facilitator": "Glen"},
+                "SLA303": {"time": "10 AM", "room": "Beach 301", "facilitator": "Shaw"},
+                "SLA291": {"time": "11 AM", "room": "Roman 216", "facilitator": "Uther"},
+                "SLA304": {"time": "12 PM", "room": "Roman 201", "facilitator": "Uther"},
+                "SLA394": {"time": "12 PM", "room": "Frank 119", "facilitator": "Singer"},
+                "SLA451": {"time": "12 PM", "room": "Roman 201", "facilitator": "Numen"},
+                "SLA101A": {"time": "1 PM", "room": "Loft 310", "facilitator": "Uther"},
+                "SLA191B": {"time": "1 PM", "room": "Loft 310", "facilitator": "Lock"},
+                "SLA101B": {"time": "3 PM", "room": "Roman 201", "facilitator": "Zeldin"},
+                "SLA449": {"time": "3 PM", "room": "Beach 301", "facilitator": "Tyler"}
+            }
+
+        for activity in test_schedule:
+            actual = fitness.fitness(test_schedule)
+            expected = 2.1
+            self.assertEqual(
+                actual,
+                expected
+            )
+
+
 def load_tests(loader, tests, pattern):
     rb_suite = unittest.TestSuite()
     rb_suite.addTests(loader.loadTestsFromTestCase(TestRomanOrBeach))
@@ -149,11 +174,15 @@ def load_tests(loader, tests, pattern):
     room_suite = unittest.TestSuite()
     room_suite.addTests(loader.loadTestsFromTestCase(TestRoomEvaluation))
 
+    fitness_suite = unittest.TestSuite()
+    fitness_suite.addTests(loader.loadTestsFromTestCase(TestFitnessEvaluation))
+
     # Dynamically load tests from all previous suites and isolated test cases.
     master_suite = unittest.TestSuite()
     master_suite.addTests(rb_suite)
     master_suite.addTests(consecutive_suite)
     master_suite.addTests(room_suite)
+    master_suite.addTests(fitness_suite)
     
     return master_suite
 
