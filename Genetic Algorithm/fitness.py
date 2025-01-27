@@ -64,6 +64,12 @@ def check_consecutive_time_slots(room_a, room_b,):
             adj = -0.4  # Should help deter large travel distance from Roman or Beach to other rooms
     
     return adj
+def check_consecutive_time_slots(room_a, room_b,):
+    adj = 0
+    if not roman_or_beach(room_a, room_b):
+            adj = -0.4  # Should help deter large travel distance from Roman or Beach to other rooms
+    
+    return adj
 
 
 def check_sla_specific_rules(filtered_activities, filtered_rooms, time_cache):
