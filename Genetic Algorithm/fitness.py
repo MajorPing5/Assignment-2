@@ -8,11 +8,11 @@ def roman_or_beach(previous_room, current_room):
             and current_room not in roman_beach)
 
 
-def eval_room(room, activity, room_cap, expected_enroll):
+def eval_room(room, act, room_cap, expected_enroll):
     # Room Size Fitness Evaluation
     adj = 0
     capacity = room_cap[room]
-    expected = expected_enroll[activity]
+    expected = expected_enroll[act]
     ratio = capacity / expected
 
     if ratio < 1:
@@ -49,7 +49,7 @@ def time_overlap(fac_sched):
         times = sched["times"]  # Set of all time slots assigned to the facilitator
         for time in times:
             # Count the number of activities in this specific time slot
-            act_count = sum(1 for _, t in sched["acts"] if t == time)
+            act_count = sum(1 for t in sched["acts"] if t == time)
             if act_count == 1:
                 adj.append(0.2)  # Reward for overseeing 1 activity in the time slot
             elif act_count > 1:
@@ -64,62 +64,101 @@ def check_consecutive_time_slots(room_a, room_b,):
             adj = -0.4  # Should help deter large travel distance from Roman or Beach to other rooms
     
     return adj
-def check_consecutive_time_slots(room_a, room_b,):
-    adj = 0
-    if not roman_or_beach(room_a, room_b):
-            adj = -0.4  # Should help deter large travel distance from Roman or Beach to other rooms
-    
-    return adj
 
 
-def check_sla_specific_rules(filtered_activities, filtered_rooms, time_cache):
+def specific_rules(filtered_activities, filtered_rooms, filtered_times, time_cache):
     # SLA101 and SLA191 Specific Checks
     adj = []
+    debug_info = []
 
     for i in range(len(filtered_activities)):
         for j in range(i + 1, len(filtered_activities)):         
-            same = (("101" in filtered_activities[i] and filtered_activities[j]) or ("191" in filtered_activities[i] and filtered_activities[j]))
-            alternating = (("101" in filtered_activities[i] and "191" in filtered_activities[j]) or("101" in filtered_activities[j] and "191" in filtered_activities[i]))
-
-            time_diff = time_delta(filtered_activities[i], filtered_activities[j], time_cache)
-
-            # For being at the same time, regardless of same activity grouping or alternating
-            if time_diff == 0:
-                if same:
-                    adj.append(-0.5)
-                elif alternating:
-                    adj.append(-0.25)
-
-            # Verifies consecutive & ONLY for SLA101 & SLA191 activity pairs
-            elif time_diff == 1 and alternating:
-                adj.append(0.5 + check_consecutive_time_slots(filtered_rooms[i], filtered_rooms[j]))
+            same = (((filtered_activities[i].startswith("SLA101")) and (filtered_activities[j].startswith("SLA101"))) or
+                    ((filtered_activities[i].startswith("SLA191")) and (filtered_activities[j].startswith("SLA191"))))
             
-            # Verifies hour break & SLA101 & SLA191 activity pair
-            elif time_diff == 2 and alternating:
-                adj.append(0.25)
+            alternating = ((filtered_activities[i].startswith("SLA101") and filtered_activities[j].startswith("SLA191")) or
+                           (filtered_activities[j].startswith("SLA101") and filtered_activities[i].startswith("SLA191")))
 
-            # For being widely spaced apart, in the same activity group only
-            elif time_diff > 5 and same:
-                adj.append(0.5)
+            time_diff = time_delta(filtered_times[i], filtered_times[j], time_cache)
 
-            # Assumes that it is spaced apart, but in SLA101 & SLA191 activity pair or some other unknown case: returns adj = 0
+            # Add debug information for this comparison
+            debug_info.append({
+                "pair": (filtered_activities[i], filtered_activities[j]),
+                "same": same,
+                "alt": alternating,
+                "time_diff": time_diff,
+            })
 
-    return round(adj, 2)
+            match time_diff:
+                case 0:
+                    if same:
+                        adj.append(-0.5)
+                    elif alternating:
+                        adj.append(-0.25)
+                
+                case 1:
+                    if alternating:
+                        adj.append(
+                            round(0.5 + check_consecutive_time_slots(filtered_rooms[i],
+                                                                     filtered_rooms[j]),
+                            2))
+                
+                case 2:
+                    if alternating:
+                        adj.append(0.25)
+                
+                case _:
+                    if time_diff > 5 and same:
+                        adj.append(0.5)
+                    else:
+                        adj.append(0)
+
+    return adj, debug_info
+
+
+def check_facilitator_consecutive(facilitator, fac_sched, act_rooms, act_times):
+    adj = []  # Store penalties or rewards
+
+    # Sort the facilitator's times using time_cache for numerical order
+    times = sorted(list(fac_sched[facilitator]["times"]), key=lambda t: time_cache[t])
+
+    # Iterate through consecutive time slot pairs
+    for i in range(len(times) - 1):
+        current_time = times[i]
+        next_time = times[i + 1]
+
+        # Check if the time slots are consecutive
+        if time_delta(current_time, next_time, time_cache) == 1:
+            # Find the activities corresponding to the consecutive times
+            current_act = next(act for act in fac_sched[facilitator]["acts"] if act_times[act] == current_time)
+            next_act = next(act for act in fac_sched[facilitator]["acts"] if act_times[act] == next_time)
+
+            # Retrieve the rooms for these activities
+            current_room = act_rooms[current_act]
+            next_room = act_rooms[next_act]
+
+            # Call the consecutive room check function and append its result
+            adj.append(check_consecutive_time_slots(current_room, next_room))
+
+    return adj
+
 
 def fac_oversched(fac_sched):
     adj = []
-    for fac, count in fac_sched.items():
+    for fac, details in fac_sched.items():
+        count = details["count"]
         if count > 4:
-            adj.append(0.5)  # Penalty for overseeing more than 5 activities
+            adj.append(-0.5)  # Penalty for overseeing more than 4 activities
         elif count <= 2 and fac != "Tyler":
             adj.append(-0.4)
+        else:
+            adj.append(0)
     
     return adj
  
 # Helps track facilitators activity load to prevent overload of assignment
 def track_fac_sched(time, act, fac, fac_sched):
     new_sched = fac_sched.copy()
-
 
     if fac not in new_sched:
         new_sched[fac] = {"count": 0, "times": set(), "acts": []}
@@ -153,19 +192,20 @@ def time_delta(time_a, time_b, time_cache):
 def fitness(schedule):
     # Stage 1: Schedule Pre-processing
     fac_sched = {}
-    act_rooms = {activity: None for activity in ACTIVITIES}
-    act_times = {activity: None for activity in ACTIVITIES}
+    act_rooms = {activity: "" for activity in ACTIVITIES}
+    act_times = {activity: "" for activity in ACTIVITIES}
 
     for index, act in enumerate(ACTIVITIES):
-        fac = schedule[act]["facilitator"]
-        time = act_times[act] = schedule[act]["time"]
-        room = act_rooms[act] = schedule[act]["room"]
+        fac = schedule[act]['facilitator']
+        time = act_times[act] = schedule[act]['time']
+        room = act_rooms[act] = schedule[act]['room']
 
         # Helper data types specific for this schedule only
         fac_sched = track_fac_sched(time, act, fac, fac_sched)
     
     filtered_activities = [act for act in schedule if "101" in act or "191" in act]
-    filtered_rooms = [schedule[act]["room"] for act in schedule if "101" in act or "191" in act]
+    filtered_rooms = [schedule[act]['room'] for act in schedule if "101" in act or "191" in act]
+    filtered_times = [schedule[act]['time'] for act in schedule if "101" in act or "191" in act]
 
     #Stage 2: Schedule Processing via Fitness Evaluation
     fitness_score = 0
@@ -177,22 +217,30 @@ def fitness(schedule):
         room_score = eval_room(act_rooms[ACTIVITIES[index]], act, room_cap, expected_enroll)
         scores.append(room_score)
         
-        facil_score = facil_pref(schedule[act]["facilitator"], act, pref_facil, alt_facil)
+        facil_score = facil_pref(schedule[act]['facilitator'], act, pref_facil, alt_facil)
         scores.append(facil_score)
         
+
+
         if i < 11:
             time_diff = time_delta(act_times[ACTIVITIES[index]], act_times[ACTIVITIES[i]], time_cache)
             overlap_score = room_overlap(index, i, ACTIVITIES, act_rooms, time_diff)
             scores.extend(overlap_score)
             i += 1
     
+    for facilitator, sched in fac_sched.items():
+        # Only process facilitators with more than 1 activity assigned
+        if sched["count"] > 1:
+            consecutive_adj = check_facilitator_consecutive(facilitator, fac_sched, act_rooms, act_times)
+            scores.extend(consecutive_adj)
+
     sched_score = fac_oversched(fac_sched)
     scores.extend(sched_score)    
 
     time_score = time_overlap(fac_sched)
     scores.extend(time_score)
 
-    specific_score = check_sla_specific_rules(filtered_activities, filtered_rooms, time_cache)
+    specific_score = specific_rules(filtered_activities, filtered_rooms, filtered_times, time_cache)
     scores.extend(specific_score)
 
     fitness_score = sum(scores)

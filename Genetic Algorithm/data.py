@@ -21,8 +21,8 @@ room_cap = {
 }
 
 expected_enroll = {
-    "SLA100A": 50,
-    "SLA100B": 50,
+    "SLA101A": 50,
+    "SLA101B": 50,
     "SLA191A": 50,
     "SLA191B": 50,
     "SLA201": 50,
